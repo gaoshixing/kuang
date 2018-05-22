@@ -13,6 +13,8 @@ import valid, {
 		errors,
 		LOGIN
 	} from "../lib/request.js";
+	import {mapMutations} from 'vuex'
+
 export default {
 	data () {
 		return {
@@ -22,6 +24,7 @@ export default {
 	},
 	
 	methods: {
+		...mapMutations(['updateUserInfo']),
 		install() {
 			if(!this.userN||!this.passW) {
 				alert('填写用户名或密码')
@@ -44,14 +47,17 @@ export default {
 				user: this.userN,
 				pass: this.passW
 			}
-			LOGIN.login(obj).then(valid.call(this))
-            .then(res => {
-                if(res.ok) {
-                   
-                }
-            })
-            .catch(errors.call(this))
-            .finally(() => {});
+			LOGIN.login(obj).then(
+				res => {
+					if(res.data.msg) {
+						this.updateUserInfo(res.data)
+						this.$router.push({
+							name: 'succ'
+						})
+					}
+				}
+			)
+        
 		}
 
 	}
